@@ -1,0 +1,48 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "fastapi_scheduler"
+authors = [
+    { name = "Atomi", email = "1456417373@qq.com" },
+]
+maintainers = [
+    { name = "Atomi", email = "1456417373@qq.com" },
+]
+description = "FastAPI-Scheduler is a simple scheduled task management FastAPI extension based on APScheduler."
+readme = "README.md"
+requires-python = ">=3.6.1"
+dynamic = ["version"]
+keywords = [
+    "fastapi-amis-admin",
+    "fastapi-APScheduler",
+    "fastapi-scheduler",
+    "APScheduler",
+]
+classifiers = [
+    "Framework :: FastAPI",
+    "Environment :: Web Environment",
+    "Topic :: System :: Systems Administration",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "fastapi-amis-admin>=0.0.23",
+    "APScheduler>=3.8.0",
+]
+
+[project.urls]
+Source = "https://github.com/amisadmin/fastapi_scheduler"
+FastAPI-Amis-Admin = "https://github.com/amisadmin/fastapi_amis_admin"
+
+[project.optional-dependencies]
+test = [
+    "pytest >=6.2.4,<7.0.0",
+]
