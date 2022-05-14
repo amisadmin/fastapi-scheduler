@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import List, Optional, Union, Any, Dict
-from fastapi import Body, Depends
+
 from apscheduler.job import Job
-from apscheduler.schedulers.base import BaseScheduler
 from apscheduler.jobstores.memory import MemoryJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.schedulers.base import BaseScheduler
+from fastapi import Body, Depends
 from fastapi_amis_admin.amis.components import PageSchema, Page, TableCRUD, TableColumn, Action, ActionType, Dialog, \
     Form, FormItem, InputDatetime
 from fastapi_amis_admin.amis.constants import SizeEnum
@@ -96,15 +97,18 @@ class SchedulerAdmin(admin.PageAdmin):
             columns=await self.get_list_columns(request),
             itemActions=await self.get_actions_on_item(request),
             bulkActions=await self.get_actions_on_bulk(request),
+            quickSaveItemApi=f'{self.router_path}/item/$id',
         )
         return page
 
     async def get_list_columns(self, request: Request) -> List[TableColumn]:
         columns = []
         for modelfield in self.JobModel.__fields__.values():
-            form = AmisParser(modelfield).as_table_column()
-            if form:
-                columns.append(form)
+            column = AmisParser(modelfield).as_table_column(
+                quick_edit=modelfield.name in self.schema_update.__fields__
+            )
+            if column:
+                columns.append(column)
         return columns
 
     async def get_actions_on_item(self, request: Request) -> List[Action]:
