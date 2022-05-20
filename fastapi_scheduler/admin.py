@@ -29,7 +29,7 @@ except ImportError:
 class SchedulerAdmin(admin.PageAdmin):
     group_schema = None
     page_schema = PageSchema(label='定时任务', icon='fa fa-clock-o')
-    page_path = "/amis.json"
+    page_path = "/"
     router_prefix = '/jobs'
     scheduler: BaseScheduler = AsyncIOScheduler(
         jobstores={
