@@ -29,6 +29,13 @@ app = FastAPI()
 # 创建`AdminSite`实例
 site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///admisadmin.db'))
 
+# # 自定义定时任务调度器
+# from apscheduler.schedulers.asyncio import AsyncIOScheduler
+# from apscheduler.jobstores.redis import RedisJobStore
+# # 使用`RedisJobStore`创建任务存储
+# scheduler = AsyncIOScheduler(jobstores={'default':RedisJobStore(db=2,host="127.0.0.1",port=6379,password="test")})
+# scheduler = SchedulerAdmin.bind(site,scheduler=scheduler)
+
 # 创建定时任务调度器`SchedulerAdmin`实例
 scheduler = SchedulerAdmin.bind(site)
 
