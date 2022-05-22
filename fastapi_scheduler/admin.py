@@ -16,6 +16,7 @@ from fastapi_amis_admin.amis_admin.parser import AmisParser
 from fastapi_amis_admin.crud.schema import BaseApiOut, CrudEnum, ItemListSchema
 from fastapi_amis_admin.crud.utils import schema_create_by_schema, parser_item_id, paginator_factory
 from fastapi_amis_admin.models.fields import Field
+from fastapi_amis_admin.utils.translation import i18n as _
 from pydantic import BaseModel, validator
 from pydantic.fields import ModelField
 from starlette.requests import Request
@@ -28,7 +29,7 @@ except ImportError:
 
 class SchedulerAdmin(admin.PageAdmin):
     group_schema = None
-    page_schema = PageSchema(label='定时任务', icon='fa fa-clock-o')
+    page_schema = PageSchema(label=_('APScheduler'), icon='fa fa-clock-o')
     page_path = "/"
     router_prefix = '/jobs'
     scheduler: BaseScheduler = AsyncIOScheduler(
@@ -39,21 +40,21 @@ class SchedulerAdmin(admin.PageAdmin):
     )
 
     class JobModel(BaseModel):
-        id: str = Field(..., title="任务ID")
-        name: str = Field(..., title="任务名称")
+        id: str = Field(..., title=_('Job ID'))
+        name: str = Field(..., title=_('Job Name'))
         next_run_time: datetime = Field(
             None,
-            title="下次执行时间",
+            title=_('Next Run Time'),
             amis_form_item=InputDatetime(format="YYYY-MM-DDTHH:mm:ss.SSSSSSZ")
         )
-        trigger: str = Field(None, title="触发器")  # BaseTrigger
-        func_ref: str = Field(..., title="任务函数")
-        args: List[Any] = Field(None, title="元组参数", amis_table_column="list")
-        kwargs: Dict[str, Any] = Field(None, title="字典参数", amis_table_column="json", amis_form_item="json-editor")
-        executor: str = Field("default", title="执行器")
-        max_instances: int = Field(None, title="最大并发数量")
-        misfire_grace_time: int = Field(None, title="容错时间")
-        coalesce: bool = Field(None, title="合并")
+        trigger: str = Field(None, title=_('Trigger'))  # BaseTrigger
+        func_ref: str = Field(..., title=_('Function'))
+        args: List[Any] = Field(None, title=_('Tuple Args'), amis_table_column="list")
+        kwargs: Dict[str, Any] = Field(None, title=_('Keyword Args'), amis_table_column="json", amis_form_item="json-editor")
+        executor: str = Field("default", title=_('Executor'))
+        max_instances: int = Field(None, title=_('Max Instances'))
+        misfire_grace_time: int = Field(None, title=_('Misfire Grace Time'))
+        coalesce: bool = Field(None, title=_('Coalesce'))
 
         @validator('trigger', pre=True)
         def trigger_valid(cls, v):  # sourcery skip: instance-method-first-arg-name
@@ -85,7 +86,8 @@ class SchedulerAdmin(admin.PageAdmin):
         page = await super().get_page(request)
         headerToolbar = ["reload", "bulkActions", {"type": "columns-toggler", "align": "right"},
                          {"type": "drag-toggler", "align": "right"}, {"type": "pagination", "align": "right"},
-                         {"type": "tpl", "tpl": "当前有 ${total} 条数据.", "className": "v-middle", "align": "right"}]
+                         {"type": "tpl", "tpl": _("SHOWING ${items|count} OF ${total} RESULT(S)"), "className": "v-middle",
+                          "align": "right"}]
         page.body = TableCRUD(
             api=f"get:{self.router_path}/list",
             autoFillHeight=True,
@@ -149,9 +151,9 @@ class SchedulerAdmin(admin.PageAdmin):
     async def get_update_action(self, request: Request, bulk: bool = False) -> Optional[Action]:
         return ActionType.Dialog(
             icon='fa fa-pencil',
-            tooltip='编辑',
+            tooltip=_('Update'),
             dialog=Dialog(
-                title='编辑',
+                title=_('Update'),
                 size=SizeEnum.lg,
                 body=await self.get_update_form(request, bulk=bulk),
             ),
@@ -162,20 +164,20 @@ class SchedulerAdmin(admin.PageAdmin):
             bulk: bool = False,
             action: Literal['auto', 'remove', 'pause', 'resume'] = 'remove',
     ) -> Optional[Action]:
-        lable, icon = {
-            "remove": ("删除", "fa-times text-danger"),
-            "pause": ("暂停", "fa-pause"),
-            "resume": ("恢复", "fa-play"),
+        label, icon = {
+            "remove": (_('remove'), "fa-times text-danger"),
+            "pause": (_('pause'), "fa-pause"),
+            "resume": (_('resume'), "fa-play"),
         }[action]
         return ActionType.Ajax(
             icon=f'fa {icon}',
-            tooltip=f'批量{lable}',
-            confirmText=f'您确定要批量{lable}?',
+            tooltip=_('Bulk %s') % label,
+            confirmText=_("Are you sure you want to batch %s selected tasks?") % label,
             api=f"{self.router_path}/item/" + '${ids|raw}?action=' + action,
         ) if bulk else ActionType.Ajax(
             icon=f'fa {icon}',
-            tooltip=lable,
-            confirmText=f'您确认要{lable}?',
+            tooltip=label,
+            confirmText=_("Are you sure you want to %s the selected task?") % label,
             api=f"{self.router_path}/item/$id?action={action}",
         )
 

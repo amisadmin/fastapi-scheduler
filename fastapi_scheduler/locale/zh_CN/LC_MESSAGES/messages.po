@@ -1,0 +1,103 @@
+# Chinese (Simplified, China) translations for PROJECT.
+# Copyright (C) 2022 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2022-05-22 18:43+0800\n"
+"PO-Revision-Date: 2022-05-22 18:43+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_Hans_CN\n"
+"Language-Team: zh_Hans_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.10.1\n"
+
+#: admin.py:32
+msgid "APScheduler"
+msgstr "定时任务"
+
+#: admin.py:43
+msgid "Job ID"
+msgstr "任务ID"
+
+#: admin.py:44
+msgid "Job Name"
+msgstr "任务名称"
+
+#: admin.py:47
+msgid "Next Run Time"
+msgstr "下次运行时间"
+
+#: admin.py:50
+msgid "Trigger"
+msgstr "触发器"
+
+#: admin.py:51
+msgid "Function"
+msgstr "任务函数"
+
+#: admin.py:52
+msgid "Tuple Args"
+msgstr "元组参数"
+
+#: admin.py:53
+msgid "Keyword Args"
+msgstr "字典参数"
+
+#: admin.py:54
+msgid "Executor"
+msgstr "执行器"
+
+#: admin.py:55
+msgid "Max Instances"
+msgstr "最大并发数"
+
+#: admin.py:56
+msgid "Misfire Grace Time"
+msgstr "容错时间"
+
+#: admin.py:57
+msgid "Coalesce"
+msgstr "合并"
+
+#: admin.py:89
+msgid "SHOWING ${items|count} OF ${total} RESULT(S)"
+msgstr "显示${total}条结果中的${items|count}条"
+
+#: admin.py:154 admin.py:156
+msgid "Update"
+msgstr "更新"
+
+#: admin.py:168
+msgid "remove"
+msgstr "移除"
+
+#: admin.py:169
+msgid "pause"
+msgstr "暂停"
+
+#: admin.py:170
+msgid "resume"
+msgstr "恢复"
+
+#: admin.py:174
+#, python-format
+msgid "Bulk %s"
+msgstr "批量%s"
+
+#: admin.py:175
+#, python-format
+msgid "Are you sure you want to batch %s selected tasks?"
+msgstr "你确定要批量%s选中任务吗?"
+
+#: admin.py:180
+#, python-format
+msgid "Are you sure you want to %s the selected task?"
+msgstr "你确定要%s选中任务吗?"
+
