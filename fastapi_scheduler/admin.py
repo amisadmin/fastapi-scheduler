@@ -14,7 +14,7 @@ from fastapi_amis_admin.amis_admin import admin
 from fastapi_amis_admin.amis_admin.admin import AdminApp, BaseAdminSite
 from fastapi_amis_admin.amis_admin.parser import AmisParser
 from fastapi_amis_admin.crud.schema import BaseApiOut, CrudEnum, ItemListSchema
-from fastapi_amis_admin.crud.utils import schema_create_by_schema, parser_item_id
+from fastapi_amis_admin.crud.utils import schema_create_by_schema, parser_item_id, paginator_factory
 from fastapi_amis_admin.models.fields import Field
 from pydantic import BaseModel, validator
 from pydantic.fields import ModelField
@@ -79,6 +79,7 @@ class SchedulerAdmin(admin.PageAdmin):
             include={"name", "next_run_time"},
             set_none=True
         )
+        self.paginator = paginator_factory(perPage_max=100)
 
     async def get_page(self, request: Request) -> Page:
         page = await super().get_page(request)
@@ -186,9 +187,13 @@ class SchedulerAdmin(admin.PageAdmin):
     def register_router(self):
 
         @self.router.get("/list", response_model=BaseApiOut[ItemListSchema[self.JobModel]], include_in_schema=True)
-        async def get_jobs():
-            data = ItemListSchema(items=[self.JobModel.parse_job(job) for job in self.scheduler.get_jobs()])
-            data.total = len(data.items)
+        async def get_jobs(paginator: self.paginator = Depends(self.paginator)):  # type: ignore
+            jobs = self.scheduler.get_jobs()
+            data = ItemListSchema(items=[
+                self.JobModel.parse_job(job) for job in
+                jobs[(paginator.page - 1) * paginator.perPage: paginator.page * paginator.perPage]
+            ])
+            data.total = len(jobs) if paginator.show_total else None
             return BaseApiOut(data=data)
 
         @self.router.post("/item/{item_id}", response_model=BaseApiOut[List[self.JobModel]], include_in_schema=True)
