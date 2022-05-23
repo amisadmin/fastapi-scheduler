@@ -132,11 +132,9 @@ class SchedulerAdmin(admin.PageAdmin):
         return list(filter(None, bulkActions))
 
     async def get_update_form(self, request: Request, bulk: bool = False) -> Form:
-        api = f'{self.router_path}/item/$id'
+
+        api = f'{self.router_path}/item/' + ('${ids|raw}' if bulk else '$id')
         fields = self.schema_update.__fields__.values()
-        if bulk:
-            api = f'{self.router_path}/item/' + '${ids|raw}'
-            fields = self.schema_update.__fields__.values()
         return Form(
             api=api,
             name=CrudEnum.update,
