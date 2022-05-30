@@ -27,7 +27,7 @@ from fastapi_scheduler import SchedulerAdmin
 app = FastAPI()
 
 # 创建`AdminSite`实例
-site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///admisadmin.db'))
+site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///amisadmin.db'))
 
 # # 自定义定时任务调度器
 # from apscheduler.schedulers.asyncio import AsyncIOScheduler
