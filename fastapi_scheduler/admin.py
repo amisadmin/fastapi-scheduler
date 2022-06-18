@@ -6,13 +6,10 @@ from apscheduler.jobstores.memory import MemoryJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.base import BaseScheduler
 from fastapi import Body, Depends
-from fastapi_amis_admin.amis.components import PageSchema, Page, TableCRUD, TableColumn, Action, ActionType, Dialog, \
-    Form, FormItem, InputDatetime
-from fastapi_amis_admin.amis.constants import SizeEnum
-from fastapi_amis_admin.amis.types import SchemaNode
-from fastapi_amis_admin.amis_admin import admin
-from fastapi_amis_admin.amis_admin.admin import AdminApp, BaseAdminSite
-from fastapi_amis_admin.amis_admin.parser import AmisParser
+from fastapi_amis_admin import admin
+from fastapi_amis_admin.admin import AdminApp, AmisParser
+from fastapi_amis_admin.amis import PageSchema, Page, TableCRUD, TableColumn, Action, ActionType, Dialog, \
+    Form, FormItem, InputDatetime, SizeEnum, SchemaNode
 from fastapi_amis_admin.crud.schema import BaseApiOut, CrudEnum, ItemListSchema
 from fastapi_amis_admin.crud.utils import schema_create_by_schema, parser_item_id, paginator_factory
 from fastapi_amis_admin.models.fields import Field
@@ -68,9 +65,9 @@ class SchedulerAdmin(admin.PageAdmin):
             })
 
     @classmethod
-    def bind(cls, site: BaseAdminSite, scheduler: BaseScheduler = None) -> BaseScheduler:
+    def bind(cls, app: AdminApp, scheduler: BaseScheduler = None) -> BaseScheduler:
         cls.scheduler = scheduler or cls.scheduler
-        site.register_admin(cls)
+        app.register_admin(cls)
         return cls.scheduler
 
     def __init__(self, app: "AdminApp"):
