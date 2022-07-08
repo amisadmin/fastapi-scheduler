@@ -34,7 +34,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
 ]
 dependencies = [
-    "fastapi-amis-admin>=0.1.8,<0.2.0",
+    "fastapi-amis-admin>=0.1.8,<0.3.0",
     "APScheduler>=3.8.0",
 ]
 
