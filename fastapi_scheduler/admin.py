@@ -7,7 +7,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.base import BaseScheduler
 from fastapi import Body, Depends
 from fastapi_amis_admin import admin
-from fastapi_amis_admin.admin import AdminApp, AmisParser
+from fastapi_amis_admin.admin import AdminApp
 from fastapi_amis_admin.amis import (
     Action,
     ActionType,
@@ -137,7 +137,9 @@ class SchedulerAdmin(admin.PageAdmin):
     async def get_list_columns(self, request: Request) -> List[TableColumn]:
         columns = []
         for modelfield in self.JobModel.__fields__.values():
-            column = AmisParser(modelfield).as_table_column(quick_edit=modelfield.name in self.schema_update.__fields__)
+            column = self.site.amis_parser.as_table_column(
+                modelfield, quick_edit=modelfield.name in self.schema_update.__fields__
+            )
             if column:
                 columns.append(column)
         return columns
@@ -211,7 +213,7 @@ class SchedulerAdmin(admin.PageAdmin):
 
     async def get_form_item(self, request: Request, modelfield: ModelField, action: CrudEnum) -> Union[FormItem, SchemaNode]:
         is_filter = action == CrudEnum.list
-        return AmisParser(modelfield).as_form_item(is_filter=is_filter)
+        return self.site.amis_parser.as_form_item(modelfield, is_filter=is_filter)
 
     def register_router(self):
         @self.router.get(
