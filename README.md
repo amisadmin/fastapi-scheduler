@@ -1,7 +1,20 @@
 <h2 align="center">
   FastAPI-Scheduler
 </h2>
-
+<p align="center">
+    <a href="https://pypi.org/project/fastapi-scheduler" target="_blank">
+        <img src="https://badgen.net/pypi/v/fastapi-scheduler?color=blue" alt="Package version">
+    </a>
+    <a href="https://pepy.tech/project/fastapi-scheduler" target="_blank">
+        <img src="https://pepy.tech/badge/fastapi-scheduler" alt="Downloads">
+    </a>
+    <a href="https://gitter.im/amisadmin/fastapi-amis-admin">
+        <img src="https://badges.gitter.im/amisadmin/fastapi-amis-admin.svg" alt="Chat on Gitter"/>
+    </a>
+    <a href="https://jq.qq.com/?_wv=1027&k=U4Dv6x8W" target="_blank">
+        <img src="https://badgen.net/badge/qq%E7%BE%A4/229036692/orange" alt="229036692">
+    </a>
+</p>
 ## Project Introduction
 
 `FastAPI-Scheduler` is a simple scheduled task management `FastAPI` extension library based on `APScheduler`.
