@@ -59,12 +59,10 @@ def date_task_test():
     print('date task is run...')
 
 
-# Mount the background management system
-site.mount_app(app)
-
-
 @app.on_event("startup")
 async def startup():
+    # Mount the background management system
+    site.mount_app(app)
     # Start the scheduled task scheduler
     scheduler.start()
 
@@ -74,6 +72,7 @@ if __name__ == '__main__':
 
     uvicorn.run(app, debug=True)
 ```
+
 ## Interface/UI preview
 
 - Open `http://127.0.0.1:8000/admin/` in your browser:
