@@ -42,7 +42,6 @@ except ImportError:
 
 
 class SchedulerAdmin(admin.PageAdmin):
-    group_schema = None
     page_schema = PageSchema(label=_("APScheduler"), icon="fa fa-clock-o")
     page_path = "/"
     router_prefix = "/jobs"
@@ -95,7 +94,7 @@ class SchedulerAdmin(admin.PageAdmin):
             include={"name", "next_run_time"},
             set_none=True,
         )
-        self.paginator = Paginator(perPage_max=100)
+        self.paginator = Paginator(perPageMax=100)
 
     async def get_page(self, request: Request) -> Page:
         page = await super().get_page(request)
