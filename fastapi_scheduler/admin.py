@@ -28,17 +28,14 @@ from fastapi_amis_admin.crud.schema import (
     ItemListSchema,
     Paginator,
 )
-from fastapi_amis_admin.crud.utils import parser_item_id, schema_create_by_schema
+from fastapi_amis_admin.crud.utils import ItemIdListDepend
 from fastapi_amis_admin.models.fields import Field
+from fastapi_amis_admin.utils.pydantic import create_model_by_model
 from fastapi_amis_admin.utils.translation import i18n as _
 from pydantic import BaseModel, validator
 from pydantic.fields import ModelField
 from starlette.requests import Request
-
-try:
-    from typing import Literal
-except ImportError:
-    from typing_extensions import Literal
+from typing_extensions import Annotated, Literal
 
 
 class SchedulerAdmin(admin.PageAdmin):
@@ -88,7 +85,7 @@ class SchedulerAdmin(admin.PageAdmin):
 
     def __init__(self, app: "AdminApp"):
         super().__init__(app)
-        self.schema_update = schema_create_by_schema(
+        self.schema_update = create_model_by_model(
             self.JobModel,
             "JobsUpdate",
             include={"name", "next_run_time"},
@@ -220,7 +217,7 @@ class SchedulerAdmin(admin.PageAdmin):
             response_model=BaseApiOut[ItemListSchema[self.JobModel]],
             include_in_schema=True,
         )
-        async def get_jobs(paginator: self.paginator = Depends(self.paginator)):  # type: ignore
+        async def get_jobs(paginator: Annotated[self.paginator, Depends()]):  # type: ignore
             jobs = self.scheduler.get_jobs()
             start = (paginator.page - 1) * paginator.perPage
             end = paginator.page * paginator.perPage
@@ -234,9 +231,9 @@ class SchedulerAdmin(admin.PageAdmin):
             include_in_schema=True,
         )
         async def modify_job(
-            item_id: List[str] = Depends(parser_item_id),
+            item_id: ItemIdListDepend,
             action: Literal["auto", "remove", "pause", "resume"] = None,
-            data: self.schema_update = Body(default=None),  # type: ignore
+            data: Annotated[self.schema_update, Body()] = None,  # type: ignore
         ):
             jobs = []
             for i in item_id:
