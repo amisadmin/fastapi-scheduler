@@ -30,10 +30,13 @@ from fastapi_amis_admin.crud.schema import (
 )
 from fastapi_amis_admin.crud.utils import ItemIdListDepend
 from fastapi_amis_admin.models.fields import Field
-from fastapi_amis_admin.utils.pydantic import create_model_by_model
+from fastapi_amis_admin.utils.pydantic import (
+    ModelField,
+    create_model_by_model,
+    model_fields,
+)
 from fastapi_amis_admin.utils.translation import i18n as _
 from pydantic import BaseModel, validator
-from pydantic.fields import ModelField
 from starlette.requests import Request
 from typing_extensions import Annotated, Literal
 
@@ -50,24 +53,24 @@ class SchedulerAdmin(admin.PageAdmin):
     class JobModel(BaseModel):
         id: str = Field(..., title=_("Job ID"))
         name: str = Field(..., title=_("Job Name"))
-        next_run_time: datetime = Field(
+        next_run_time: Optional[datetime] = Field(
             None,
             title=_("Next Run Time"),
             amis_form_item=InputDatetime(format="YYYY-MM-DDTHH:mm:ss.SSSSSSZ"),
         )
-        trigger: str = Field(None, title=_("Trigger"))  # BaseTrigger
+        trigger: Optional[str] = Field(None, title=_("Trigger"))  # BaseTrigger
         func_ref: str = Field(..., title=_("Function"))
-        args: List[Any] = Field(None, title=_("Tuple Args"), amis_table_column="list")
+        args: List[Any] = Field([], title=_("Tuple Args"), amis_table_column="list")
         kwargs: Dict[str, Any] = Field(
-            None,
+            {},
             title=_("Keyword Args"),
             amis_table_column="json",
             amis_form_item="json-editor",
         )
         executor: str = Field("default", title=_("Executor"))
-        max_instances: int = Field(None, title=_("Max Instances"))
-        misfire_grace_time: int = Field(None, title=_("Misfire Grace Time"))
-        coalesce: bool = Field(None, title=_("Coalesce"))
+        max_instances: Optional[int] = Field(None, title=_("Max Instances"))
+        misfire_grace_time: Optional[int] = Field(None, title=_("Misfire Grace Time"))
+        coalesce: bool = Field(False, title=_("Coalesce"))
 
         @validator("trigger", pre=True)
         def trigger_valid(cls, v):  # sourcery skip: instance-method-first-arg-name
@@ -75,7 +78,7 @@ class SchedulerAdmin(admin.PageAdmin):
 
         @classmethod
         def parse_job(cls, job: Job):
-            return job and cls(**{k: getattr(job, k, None) for k in cls.__fields__})
+            return job and cls(**{k: getattr(job, k, None) for k in model_fields(cls)})
 
     @classmethod
     def bind(cls, app: AdminApp, scheduler: BaseScheduler = None) -> BaseScheduler:
@@ -132,10 +135,9 @@ class SchedulerAdmin(admin.PageAdmin):
 
     async def get_list_columns(self, request: Request) -> List[TableColumn]:
         columns = []
-        for modelfield in self.JobModel.__fields__.values():
-            column = self.site.amis_parser.as_table_column(
-                modelfield, quick_edit=modelfield.name in self.schema_update.__fields__
-            )
+        update_fields = model_fields(self.schema_update)
+        for modelfield in model_fields(self.JobModel).values():
+            column = self.site.amis_parser.as_table_column(modelfield, quick_edit=modelfield.name in update_fields)
             if column:
                 columns.append(column)
         return columns
@@ -160,7 +162,7 @@ class SchedulerAdmin(admin.PageAdmin):
     async def get_update_form(self, request: Request, bulk: bool = False) -> Form:
 
         api = f"{self.router_path}/item/" + ("${ids|raw}" if bulk else "$id")
-        fields = self.schema_update.__fields__.values()
+        fields = model_fields(self.schema_update).values()
         return Form(
             api=api,
             name=CrudEnum.update,
