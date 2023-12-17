@@ -70,7 +70,7 @@ class SchedulerAdmin(admin.PageAdmin):
         executor: str = Field("default", title=_("Executor"))
         max_instances: Optional[int] = Field(None, title=_("Max Instances"))
         misfire_grace_time: Optional[int] = Field(None, title=_("Misfire Grace Time"))
-        coalesce: bool = Field(False, title=_("Coalesce"))
+        coalesce: Optional[bool] = Field(None, title=_("Coalesce"))
 
         @validator("trigger", pre=True)
         def trigger_valid(cls, v):  # sourcery skip: instance-method-first-arg-name
