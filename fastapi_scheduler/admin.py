@@ -39,6 +39,7 @@ from fastapi_amis_admin.utils.translation import i18n as _
 from pydantic import BaseModel, validator
 from starlette.requests import Request
 from typing_extensions import Annotated, Literal
+import tzlocal
 
 
 class SchedulerAdmin(admin.PageAdmin):
@@ -47,7 +48,7 @@ class SchedulerAdmin(admin.PageAdmin):
     router_prefix = "/jobs"
     scheduler: BaseScheduler = AsyncIOScheduler(
         jobstores={"default": MemoryJobStore()},
-        timezone="Asia/Shanghai",
+        timezone=tzlocal.get_localzone_name(),
     )
 
     class JobModel(BaseModel):
